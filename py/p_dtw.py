@@ -29,16 +29,16 @@ def get_probas(cost_up, cost_right, cost_diagonal, gamma):
 
 
 def get_probas_formula(cost_up, cost_right, cost_diagonal, gamma):
-    if gamma < 1e-12:  # TODO: Not great since it does not deal with the case of equal costs
+    if gamma < 1e-12:
         probas = numpy.zeros((3,))
         min_val = min(cost_up, cost_right, cost_diagonal)
         if cost_up == min_val:
             probas[UP] = 1.
-        elif cost_diagonal == min_val:
+        if cost_diagonal == min_val:
             probas[DIAGONAL] = 1.
-        else:
-            probas[RIGHT] = 1.
-        return probas
+            if cost_right == min_val:
+                probas[RIGHT] = 1.
+        return probas / numpy.sum(probas)
     probas = numpy.zeros((3,)) * numpy.nan
     p_up = 1. / 3. * (1. + (cost_right + cost_diagonal - 2 * cost_up) / (2 * gamma))
     p_right = 1. / 3. * (1. + (cost_up + cost_diagonal - 2 * cost_right) / (2 * gamma))
@@ -52,7 +52,7 @@ def get_probas_formula(cost_up, cost_right, cost_diagonal, gamma):
         elif p_right < 0.:
             probas[UP], probas[RIGHT], probas[DIAGONAL] = 0., 0., 1.
         else:
-            probas[UP], probas[RIGHT], probas[DIAGONAL] = 0., 1., 0.  # TODO: is it sure???
+            probas[UP], probas[RIGHT], probas[DIAGONAL] = 0., 1., 0.
     elif p_right < 0:
         p_right = 0.
         p_up = .5 * (1. + (cost_diagonal - cost_up) / (2 * gamma))
@@ -61,7 +61,7 @@ def get_probas_formula(cost_up, cost_right, cost_diagonal, gamma):
         elif p_up < 0.:
             probas[UP], probas[RIGHT], probas[DIAGONAL] = 0., 0., 1.
         else:
-            probas[UP], probas[RIGHT], probas[DIAGONAL] = 1., 0., 0.  # TODO: is it sure???
+            probas[UP], probas[RIGHT], probas[DIAGONAL] = 1., 0., 0.
     else:
         p_diagonal = 0.
         p_up = .5 * (1. + (cost_right - cost_up) / (2 * gamma))
@@ -70,7 +70,7 @@ def get_probas_formula(cost_up, cost_right, cost_diagonal, gamma):
         elif p_up < 0.:
             probas[UP], probas[RIGHT], probas[DIAGONAL] = 0., 1., 0.
         else:
-            probas[UP], probas[RIGHT], probas[DIAGONAL] = 1., 0., 0.  # TODO: is it sure???
+            probas[UP], probas[RIGHT], probas[DIAGONAL] = 1., 0., 0.
     assert numpy.alltrue(numpy.logical_and(probas >= -1e-10, probas <= 1 + 1e-10)), probas
     assert numpy.sum(probas) <= 1 + 1e-10, probas
     return probas
