@@ -36,8 +36,8 @@ def get_probas_formula(cost_up, cost_right, cost_diagonal, gamma):
             probas[UP] = 1.
         if cost_diagonal == min_val:
             probas[DIAGONAL] = 1.
-            if cost_right == min_val:
-                probas[RIGHT] = 1.
+        if cost_right == min_val:
+            probas[RIGHT] = 1.
         return probas / numpy.sum(probas)
     probas = numpy.zeros((3,)) * numpy.nan
     p_up = 1. / 3. * (1. + (cost_right + cost_diagonal - 2 * cost_up) / (2 * gamma))
