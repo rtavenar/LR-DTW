@@ -1,0 +1,64 @@
+from scipy.spatial.distance import cdist
+import numpy
+
+__author__ = 'Romain Tavenard romain.tavenard[at]univ-rennes2.fr'
+
+
+UP = 0
+RIGHT = 1
+DIAGONAL = 2
+
+
+def get_probas(cost_up, cost_right, cost_diagonal, gamma):
+    probas = numpy.zeros((3, )) * numpy.nan
+    # TMP: stupid implementation
+    vec_p1 = numpy.arange(0., 1.01, .01)
+    vec_p2 = numpy.arange(0., 1.01, .01)
+    p1, p2 = numpy.meshgrid(vec_p1, vec_p2)
+    C = cost_up * p1 + cost_right * p2 + cost_diagonal * (1 - p1 - p2) + gamma * (p1 ** 2 + p2 ** 2 + (1 - p1 - p2) ** 2)
+    Cmin = numpy.min(C)
+    p1_best = p1[C == Cmin][0]
+    p2_best = p2[C == Cmin][0]
+    probas[UP] = p1_best
+    probas[DIAGONAL] = p2_best
+    probas[RIGHT] = 1 - p1_best - p2_best
+    # TODO using formulas
+    return probas
+
+
+def p_dtw(s_x=None, s_y=None, mat_dist=None, gamma=0.):
+    if mat_dist is None:
+        assert s_x is not None and s_y is not None, "If mat_dist is not given, both time series should be provided"
+        mat_dist = cdist(s_x, s_y)
+    n, m = mat_dist.shape
+    mat_cost = numpy.zeros((n, m))
+    probas = numpy.zeros((n, m, 3))
+    for i in range(1, n):
+        probas[i, 0][UP] = 1.
+        mat_cost[i, 0] = mat_cost[i - 1, 0] + mat_dist[i, 0]
+    for j in range(1, m):
+        probas[0, j][RIGHT] = 1.
+        mat_cost[0, j] = mat_cost[0, j - 1] + mat_dist[0, j]
+    for i in range(1, n):
+        for j in range(1, m):
+            probas[i, j] = get_probas(cost_up=mat_cost[i - 1, j], cost_right=mat_cost[i, j - 1],
+                                      cost_diagonal=mat_cost[i - 1, j - 1], gamma=gamma)
+            mat_cost[i, j] = probas[i, j][UP] * mat_cost[i - 1, j] + probas[i, j][RIGHT] * mat_cost[i, j - 1] + \
+                             probas[i, j][DIAGONAL] * mat_cost[i - 1, j - 1] + mat_dist[i, j]
+    return mat_cost[-1, -1], probas
+
+
+def p_dtw_backtrace(probas):
+    n, m = probas.shape[:2]
+    mat_probas = numpy.zeros((n, m))
+    mat_probas[-1, -1] = 1.
+    for i in range(n - 2, -1, -1):
+        mat_probas[i, -1] = mat_probas[i + 1, -1] * probas[i + 1, -1][UP]
+    for j in range(m - 2, -1, -1):
+        mat_probas[-1, j] = mat_probas[-1, j + 1] * probas[-1, j + 1][RIGHT]
+    for i in range(n - 2, -1, -1):
+        for j in range(m - 2, -1, -1):
+            mat_probas[i, j] = mat_probas[i + 1, j] * probas[i + 1, j][UP] + \
+                               mat_probas[i, j + 1] * probas[i, j + 1][RIGHT] + \
+                               mat_probas[i + 1, j + 1] * probas[i + 1, j + 1][DIAGONAL]
+    return mat_probas
