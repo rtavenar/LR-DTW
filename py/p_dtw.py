@@ -3,19 +3,19 @@ import numpy
 
 __author__ = 'Romain Tavenard romain.tavenard[at]univ-rennes2.fr'
 
-
 UP = 0
 RIGHT = 1
 DIAGONAL = 2
 
 
+# @deprecated (+buggy?) function
 def get_probas(cost_up, cost_right, cost_diagonal, gamma):
-    probas = numpy.zeros((3, )) * numpy.nan
-    # TMP: stupid implementation
+    probas = numpy.zeros((3,)) * numpy.nan
     vec_p1 = numpy.arange(0., 1.01, .01)
     vec_p2 = numpy.arange(0., 1.01, .01)
     p1, p2 = numpy.meshgrid(vec_p1, vec_p2)
-    C = cost_up * p1 + cost_right * p2 + cost_diagonal * (1 - p1 - p2) + gamma * (p1 ** 2 + p2 ** 2 + (1 - p1 - p2) ** 2)
+    C = cost_up * p1 + cost_right * p2 + cost_diagonal * (1 - p1 - p2) + gamma * (
+    p1 ** 2 + p2 ** 2 + (1 - p1 - p2) ** 2)
     C[p1 < 0] = C[p2 < 0] = C[p1 + p2 > 1] = numpy.inf
     Cmin = numpy.min(C)
     p1_best = p1[C == Cmin][0]
@@ -25,7 +25,54 @@ def get_probas(cost_up, cost_right, cost_diagonal, gamma):
     probas[RIGHT] = 1 - p1_best - p2_best
     assert numpy.alltrue(numpy.logical_and(probas >= -1e-10, probas <= 1 + 1e-10)), probas
     assert numpy.sum(probas) <= 1 + 1e-10, probas
-    # TODO using formulas
+    return probas
+
+
+def get_probas_formula(cost_up, cost_right, cost_diagonal, gamma):
+    if gamma < 1e-12:  # TODO: Not great since it does not deal with the case of equal costs
+        probas = numpy.zeros((3,))
+        min_val = min(cost_up, cost_right, cost_diagonal)
+        if cost_up == min_val:
+            probas[UP] = 1.
+        elif cost_diagonal == min_val:
+            probas[DIAGONAL] = 1.
+        else:
+            probas[RIGHT] = 1.
+        return probas
+    probas = numpy.zeros((3,)) * numpy.nan
+    p_up = 1. / 3. * (1. + (cost_right + cost_diagonal - 2 * cost_up) / (2 * gamma))
+    p_right = 1. / 3. * (1. + (cost_up + cost_diagonal - 2 * cost_right) / (2 * gamma))
+    if p_up >= 0. and p_right >= 0. and p_up + p_right <= 1.:
+        probas[UP], probas[RIGHT], probas[DIAGONAL] = p_up, p_right, 1 - p_up - p_right
+    elif p_up < 0:
+        p_up = 0.
+        p_right = .5 * (1. + (cost_diagonal - cost_right) / (2 * gamma))
+        if 0 <= p_right <= 1:
+            probas[UP], probas[RIGHT], probas[DIAGONAL] = p_up, p_right, 1 - p_up - p_right
+        elif p_right < 0.:
+            probas[UP], probas[RIGHT], probas[DIAGONAL] = 0., 0., 1.
+        else:
+            probas[UP], probas[RIGHT], probas[DIAGONAL] = 0., 1., 0.  # TODO: is it sure???
+    elif p_right < 0:
+        p_right = 0.
+        p_up = .5 * (1. + (cost_diagonal - cost_up) / (2 * gamma))
+        if 0 <= p_up <= 1:
+            probas[UP], probas[RIGHT], probas[DIAGONAL] = p_up, p_right, 1 - p_up - p_right
+        elif p_up < 0.:
+            probas[UP], probas[RIGHT], probas[DIAGONAL] = 0., 0., 1.
+        else:
+            probas[UP], probas[RIGHT], probas[DIAGONAL] = 1., 0., 0.  # TODO: is it sure???
+    else:
+        p_diagonal = 0.
+        p_up = .5 * (1. + (cost_right - cost_up) / (2 * gamma))
+        if 0 <= p_up <= 1:
+            probas[UP], probas[RIGHT], probas[DIAGONAL] = p_up, 1 - p_diagonal - p_up, p_diagonal
+        elif p_up < 0.:
+            probas[UP], probas[RIGHT], probas[DIAGONAL] = 0., 1., 0.
+        else:
+            probas[UP], probas[RIGHT], probas[DIAGONAL] = 1., 0., 0.  # TODO: is it sure???
+    assert numpy.alltrue(numpy.logical_and(probas >= -1e-10, probas <= 1 + 1e-10)), probas
+    assert numpy.sum(probas) <= 1 + 1e-10, probas
     return probas
 
 
@@ -44,8 +91,8 @@ def p_dtw(s_x=None, s_y=None, mat_dist=None, gamma=0.):
         mat_cost[0, j] = mat_cost[0, j - 1] + mat_dist[0, j]
     for i in range(1, n):
         for j in range(1, m):
-            probas[i, j] = get_probas(cost_up=mat_cost[i - 1, j], cost_right=mat_cost[i, j - 1],
-                                      cost_diagonal=mat_cost[i - 1, j - 1], gamma=gamma)
+            probas[i, j] = get_probas_formula(cost_up=mat_cost[i - 1, j], cost_right=mat_cost[i, j - 1],
+                                              cost_diagonal=mat_cost[i - 1, j - 1], gamma=gamma)
             mat_cost[i, j] = probas[i, j][UP] * mat_cost[i - 1, j] + probas[i, j][RIGHT] * mat_cost[i, j - 1] + \
                              probas[i, j][DIAGONAL] * mat_cost[i - 1, j - 1] + mat_dist[i, j]
     return mat_cost[-1, -1], probas
@@ -65,6 +112,7 @@ def p_dtw_backtrace(probas):
                                mat_probas[i, j + 1] * probas[i, j + 1][RIGHT] + \
                                mat_probas[i + 1, j + 1] * probas[i + 1, j + 1][DIAGONAL]
     return mat_probas
+
 
 if __name__ == "__main__":
     for gamma in [0., 1., 10., 100., 1000.]:
