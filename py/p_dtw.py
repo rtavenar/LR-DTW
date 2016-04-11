@@ -16,12 +16,15 @@ def get_probas(cost_up, cost_right, cost_diagonal, gamma):
     vec_p2 = numpy.arange(0., 1.01, .01)
     p1, p2 = numpy.meshgrid(vec_p1, vec_p2)
     C = cost_up * p1 + cost_right * p2 + cost_diagonal * (1 - p1 - p2) + gamma * (p1 ** 2 + p2 ** 2 + (1 - p1 - p2) ** 2)
+    C[p1 < 0] = C[p2 < 0] = C[p1 + p2 > 1] = numpy.inf
     Cmin = numpy.min(C)
     p1_best = p1[C == Cmin][0]
     p2_best = p2[C == Cmin][0]
     probas[UP] = p1_best
     probas[DIAGONAL] = p2_best
     probas[RIGHT] = 1 - p1_best - p2_best
+    assert numpy.alltrue(numpy.logical_and(probas >= -1e-10, probas <= 1 + 1e-10)), probas
+    assert numpy.sum(probas) <= 1 + 1e-10, probas
     # TODO using formulas
     return probas
 
@@ -62,3 +65,7 @@ def p_dtw_backtrace(probas):
                                mat_probas[i, j + 1] * probas[i, j + 1][RIGHT] + \
                                mat_probas[i + 1, j + 1] * probas[i + 1, j + 1][DIAGONAL]
     return mat_probas
+
+if __name__ == "__main__":
+    for gamma in [0., 1., 10., 100., 1000.]:
+        print(gamma, get_probas(10, 15, 20, gamma))

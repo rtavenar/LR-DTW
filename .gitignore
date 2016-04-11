@@ -1,4 +1,6 @@
 **/*.pyc
 .idea
 notebooks/.ipynb_checkpoints
+py/test_p_dtw.py
+**/.DS_Store
 
