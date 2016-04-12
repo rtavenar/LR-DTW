@@ -7,3 +7,4 @@ c/test_p_dtw*
 xp/*
 c/*.o
 c/test_optima*
+c/test_ucr*

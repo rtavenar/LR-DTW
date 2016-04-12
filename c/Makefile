@@ -33,11 +33,14 @@ OBJECTS = $(SOURCES:%.cc=%.o)
 #
 # Starting with 'all' make it  becomes the default target when none
 # is specified on 'make' command line.
-all : test_optima
+all : test_ucr test_optima test_p_dtw
 
-# Declare that the final program depends on all objects and the Makfile
 test_optima : test_optima.o p_dtw.o Makefile
 	$(CXX) -o $@ $(LDFLAGS) test_optima.o p_dtw.o
+test_ucr : test_ucr.o ucr.o Makefile
+	$(CXX) -o $@ $(LDFLAGS) test_ucr.o ucr.o
+test_p_dtw : test_p_dtw.o p_dtw.o Makefile
+	$(CXX) -o $@ $(LDFLAGS) test_p_dtw.o p_dtw.o
 
 
 %.o: %.cc $(HEADERS) Makefile
