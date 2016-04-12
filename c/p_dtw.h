@@ -13,3 +13,4 @@ float d(const vec_t x, const vec_t y);
 void cdist(const mat_t s_x, const mat_t s_y, mat_t *distances);
 vec_t get_probas_formula(const float cost_up, const float cost_right, const float cost_diagonal, const float gamma);
 float p_dtw(const mat_t s_x, const mat_t s_y, const float gamma, mat3d_t *probas);
+void p_dtw_backtrace(const mat3d_t probas, mat_t *mat_probas);

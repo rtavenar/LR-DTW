@@ -132,3 +132,25 @@ float p_dtw(const mat_t s_x, const mat_t s_y, const float gamma, mat3d_t *probas
 
     return mat_cost[s_x.size() - 1][s_y.size() - 1];
 }
+
+void p_dtw_backtrace(const mat3d_t probas, mat_t *mat_probas) {
+    (*mat_probas).resize(probas.size());
+    for(size_t i=0; i<(*mat_probas).size(); ++i)
+        (*mat_probas)[i].resize(probas[i].size());
+    (*mat_probas)[probas.size() - 1][probas[0].size() - 1] = 1.;
+    for(int i=probas.size() - 2; i>=0; --i) {
+        size_t m = (*mat_probas)[i].size();
+        (*mat_probas)[i][m - 1] = (*mat_probas)[i + 1][m - 1] * probas[i + 1][m - 1][UP];
+    }
+    for(int j=probas[0].size() - 2; j>=0; --j) {
+        size_t n = (*mat_probas).size();
+        (*mat_probas)[n - 1][j] = (*mat_probas)[n - 1][j + 1] * probas[n - 1][j + 1][RIGHT];
+    }
+    for(int i=probas.size() - 2; i>=0; --i) {
+        for(int j=probas[i].size() - 2; j>=0; --j) {
+            (*mat_probas)[i][j] = (*mat_probas)[i + 1][j] * probas[i + 1][j][UP] +
+                                  (*mat_probas)[i][j + 1] * probas[i][j + 1][RIGHT] +
+                                  (*mat_probas)[i + 1][j + 1] * probas[i + 1][j + 1][DIAGONAL];
+        }
+    }
+}
