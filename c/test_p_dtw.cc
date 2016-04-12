@@ -17,7 +17,7 @@ int main(int argc, char **argv)
     for(size_t i=0; i<N; ++i)
         s_y[i].resize(1);
 
-    p_dtw(s_x, s_y, 10., &probas);
+    p_dtw(s_x, s_y, 10., &probas, true);
     p_dtw_backtrace(probas, &mat_probas);
 
     for(size_t i=0; i<N; ++i) {
