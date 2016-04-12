@@ -1,6 +1,6 @@
 # Main items on the TODO list for this project
 
-* Check that obtained optimal probas (for both python and C versions) correspond to real optima
+* Entropy penalized version (C + python)
 * UCR file reader for C version
 * 1NN classifier for C version
 * Theoretic study of whether it would be feasible to derive a kernel from pDTW
