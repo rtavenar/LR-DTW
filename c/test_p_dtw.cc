@@ -3,7 +3,7 @@
 #include "p_dtw.h"
 
 #define N 50
-
+/*
 int main(int argc, char **argv)
 {
     mat_t s_x, s_y, mat_probas;
@@ -28,4 +28,4 @@ int main(int argc, char **argv)
     }
 
     return 0;
-}
+}*/

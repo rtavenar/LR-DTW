@@ -3,7 +3,7 @@
 .PHONY: all, clean
 
 # Define the final program name
-PROGNAME := test_p_dtw
+PROGNAME := test_optima
 
 # CFLAGS is used for C compilation options.
 CFLAGS := -Wall -O0
@@ -26,18 +26,18 @@ HEADERS = $(wildcard %.h)
 
 # Construct the list of object files based on source files using
 # simple extension substitution.
-OBJECTS = $(SOURCES:%.cpp=%.o)
+OBJECTS = $(SOURCES:%.cc=%.o)
 
 #
 # Now declare the dependencies rules and targets
 #
 # Starting with 'all' make it  becomes the default target when none
 # is specified on 'make' command line.
-all : $(PROGNAME)
+all : test_optima
 
 # Declare that the final program depends on all objects and the Makfile
-$(PROGNAME) : $(OBJECTS) Makefile
-	$(CXX) -o $@ $(LDFLAGS) $(OBJECTS)
+test_optima : test_optima.o p_dtw.o Makefile
+	$(CXX) -o $@ $(LDFLAGS) test_optima.o p_dtw.o
 
 
 %.o: %.cc $(HEADERS) Makefile
