@@ -4,4 +4,4 @@ notebooks/.ipynb_checkpoints
 py/test_p_dtw.py
 **/.DS_Store
 c/test_p_dtw*
-
+xp/*
