@@ -2,14 +2,11 @@
 # "all" and "clean" are good candidates.
 .PHONY: all, clean
 
-# Define the final program name
-PROGNAME := test_optima
-
 # CFLAGS is used for C compilation options.
-CFLAGS := -Wall -O0
+CFLAGS := -Wall -O3
 
 # CXXFLAGS is used for C++ compilation options.
-CXXFLAGS += -Wall -O0
+CXXFLAGS += -Wall -O3
 
 # LDFLAGS is used for linker (-g enables debug symbols)
 LDFLAGS  += -g
@@ -33,7 +30,7 @@ OBJECTS = $(SOURCES:%.cc=%.o)
 #
 # Starting with 'all' make it  becomes the default target when none
 # is specified on 'make' command line.
-all : test_ucr test_optima test_p_dtw
+all : test_ucr test_optima test_p_dtw test_1nn
 
 test_optima : test_optima.o p_dtw.o Makefile
 	$(CXX) -o $@ $(LDFLAGS) test_optima.o p_dtw.o
@@ -41,6 +38,8 @@ test_ucr : test_ucr.o ucr.o Makefile
 	$(CXX) -o $@ $(LDFLAGS) test_ucr.o ucr.o
 test_p_dtw : test_p_dtw.o p_dtw.o Makefile
 	$(CXX) -o $@ $(LDFLAGS) test_p_dtw.o p_dtw.o
+test_1nn : test_1nn.o p_dtw.o ucr.o 1nn.o Makefile
+	$(CXX) -o $@ $(LDFLAGS) test_1nn.o p_dtw.o ucr.o 1nn.o
 
 
 %.o: %.cc $(HEADERS) Makefile
@@ -52,4 +51,4 @@ test_p_dtw : test_p_dtw.o p_dtw.o Makefile
 # - the '-' before 'rm' command to inform make to ignore errors.
 clean :
 	@echo "Clean."
-	-rm -f *.o $(PROGNAME)
+	-rm -f *.o

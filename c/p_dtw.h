@@ -1,13 +1,11 @@
 #include <vector>
 #include <cmath>
 
+#include "types.h"
+
 #define UP 0
 #define RIGHT 1
 #define DIAGONAL 2
-
-typedef std::vector< std::vector<float> > mat_t;
-typedef std::vector< std::vector< std::vector<float> > > mat3d_t;
-typedef std::vector<float> vec_t;
 
 float d(const vec_t x, const vec_t y);
 void cdist(const mat_t s_x, const mat_t s_y, mat_t *distances);

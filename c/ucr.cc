@@ -22,7 +22,7 @@ vec_t read_row(std::istream& str) {
     return result;
 }
 
-void read_ucr_file(std::string fname, vec_int_t *labels, mat_t *data) {
+void read_ucr_file(std::string fname, vec_int_t *labels, mat3d_t *data) {
     std::ifstream file;
     file.open(fname);
     vec_t row;
@@ -30,9 +30,12 @@ void read_ucr_file(std::string fname, vec_int_t *labels, mat_t *data) {
     row = read_row(file);
     while (row.size() > 0) {
         (*labels).push_back(static_cast<int>(row[0]));
-        vec_t row_data;
-        for(size_t i=1; i<row.size(); ++i)
-            row_data.push_back(row[i]);
+        mat_t row_data;
+        for(size_t i=1; i<row.size(); ++i) {
+            vec_t monodim;
+            monodim.push_back(row[i]);
+            row_data.push_back(monodim);
+        }
         (*data).push_back(row_data);
         row = read_row(file);
     }

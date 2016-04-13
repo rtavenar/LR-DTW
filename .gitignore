@@ -8,3 +8,5 @@ xp/*
 c/*.o
 c/test_optima*
 c/test_ucr*
+c/test_1nn
+

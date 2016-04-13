@@ -1,10 +1,7 @@
 #include <vector>
 #include <string>
 
-
-typedef std::vector< std::vector<float> > mat_t;
-typedef std::vector<float> vec_t;
-typedef std::vector<int> vec_int_t;
+#include "types.h"
 
 vec_t read_row(std::istream& str);
-void read_ucr_file(std::string fname, vec_int_t *labels, mat_t *data);
+void read_ucr_file(std::string fname, vec_int_t *labels, mat3d_t *data);
