@@ -32,12 +32,6 @@ OBJECTS = $(SOURCES:%.cc=%.o)
 # is specified on 'make' command line.
 all : test_ucr test_optima test_lr_dtw test_1nn
 
-test_optima : test_optima.o lr_dtw.o Makefile
-	$(CXX) -o $@ $(LDFLAGS) test_optima.o lr_dtw.o
-test_ucr : test_ucr.o ucr.o Makefile
-	$(CXX) -o $@ $(LDFLAGS) test_ucr.o ucr.o
-test_p_dtw : test_lr_dtw.o lr_dtw.o Makefile
-	$(CXX) -o $@ $(LDFLAGS) test_lr_dtw.o lr_dtw.o
 test_1nn : test_1nn.o lr_dtw.o ucr.o 1nn.o Makefile
 	$(CXX) -o $@ $(LDFLAGS) test_1nn.o lr_dtw.o ucr.o 1nn.o
 
