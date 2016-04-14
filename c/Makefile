@@ -33,11 +33,11 @@ OBJECTS = $(SOURCES:%.cc=%.o)
 all : test_1nn
 
 test_1nn : test_1nn.o lr_dtw.o ucr.o 1nn.o Makefile
-	$(CXX) -o $@ $(LDFLAGS) test_1nn.o lr_dtw.o ucr.o 1nn.o
+	c++ -o $@ $(LDFLAGS) test_1nn.o lr_dtw.o ucr.o 1nn.o
 
 
 %.o: %.cc $(HEADERS) Makefile
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(OUTPUT_OPTION) $<
+	c++ $(CXXFLAGS) $(CPPFLAGS) -c $(OUTPUT_OPTION) $<
 
 # Simple clean-up target
 # notes:
