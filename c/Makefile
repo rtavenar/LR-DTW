@@ -30,7 +30,7 @@ OBJECTS = $(SOURCES:%.cc=%.o)
 #
 # Starting with 'all' make it  becomes the default target when none
 # is specified on 'make' command line.
-all : test_ucr test_optima test_lr_dtw test_1nn
+all : test_1nn
 
 test_1nn : test_1nn.o lr_dtw.o ucr.o 1nn.o Makefile
 	$(CXX) -o $@ $(LDFLAGS) test_1nn.o lr_dtw.o ucr.o 1nn.o
