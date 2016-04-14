@@ -15,7 +15,7 @@ vec_t read_row(std::istream& str) {
     std::getline(str, line);
     std::stringstream line_stream(line);
 
-    while(std::getline(line_stream, cell, ' ')) {
+    while(std::getline(line_stream, cell, ',')) {
         if(cell.size() > 0)
             result.push_back(std::stof(cell));
     }
