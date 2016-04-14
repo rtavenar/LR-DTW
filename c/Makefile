@@ -6,7 +6,7 @@
 CFLAGS := -Wall -O3
 
 # CXXFLAGS is used for C++ compilation options.
-CXXFLAGS += -Wall -O3
+CXXFLAGS += -Wall -O3 -std=c++11
 
 # LDFLAGS is used for linker (-g enables debug symbols)
 LDFLAGS  += -g
@@ -37,7 +37,7 @@ test_1nn : test_1nn.o lr_dtw.o ucr.o 1nn.o Makefile
 
 
 %.o: %.cc $(HEADERS) Makefile
-	c++ $(CXXFLAGS) $(CPPFLAGS) -c $(OUTPUT_OPTION) $<
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(OUTPUT_OPTION) $<
 
 # Simple clean-up target
 # notes:
