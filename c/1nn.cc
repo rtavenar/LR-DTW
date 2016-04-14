@@ -16,7 +16,7 @@ vec_int_t dtw_reg_1nn_clf(const mat3d_t train_data, const mat3d_t test_data, con
         idx = std::min_element(distances.begin(), distances.end()) - distances.begin();
         predicted_labels.push_back(train_labels[idx]);
         distances.clear();
-        cout << train_labels[idx] << std::endl;
+        std::cout << train_labels[idx] << std::endl;
     }
 
     return predicted_labels;
