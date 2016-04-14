@@ -1,8 +1,18 @@
 #include <iostream>
+#include <string>
+#include <sstream>
+#include <vector>
 
 #include "ucr.h"
 #include "1nn.h"
 #include "types.h"
+
+std::string get_fname(std::string full_path) {
+    std::stringstream ss(full_path);
+    std::string item;
+    while(std::getline(ss, item, '/'));
+    return item;
+}
 
 int main(int argc, char **argv) {
     vec_int_t labels_train, labels_test, predicted_labels;
@@ -25,7 +35,7 @@ int main(int argc, char **argv) {
     for(size_t i=0; i<predicted_labels.size(); ++i)
         if(predicted_labels[i] == labels_test[i])
             n_cc += 1.;
-    std::cout << argv[2] << ";" << gamma << ";" << entropy_regularized << ";" << n_cc / predicted_labels.size()
+    std::cout << get_fname(argv[2]) << ";" << gamma << ";" << entropy_regularized << ";" << n_cc / predicted_labels.size()
               << std::endl;
 
     return 0;
