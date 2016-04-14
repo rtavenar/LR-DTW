@@ -1,7 +1,7 @@
 #include <vector>
 #include <cmath>
 #include <iostream>
-#include "p_dtw.h"
+#include "lr_dtw.h"
 
 float d(const vec_t x, const vec_t y) {
     float dst = 0.;
@@ -117,7 +117,7 @@ vec_t get_probas_formula(const float cost_up, const float cost_right, const floa
     return probas;
 }
 
-float p_dtw(const mat_t s_x, const mat_t s_y, const float gamma, mat3d_t *probas, const bool entropy_regularized) {
+float lr_dtw(const mat_t s_x, const mat_t s_y, const float gamma, mat3d_t *probas, const bool entropy_regularized) {
     mat_t distances, mat_cost;
 
     cdist(s_x, s_y, &distances);
@@ -154,7 +154,7 @@ float p_dtw(const mat_t s_x, const mat_t s_y, const float gamma, mat3d_t *probas
     return mat_cost[s_x.size() - 1][s_y.size() - 1];
 }
 
-void p_dtw_backtrace(const mat3d_t probas, mat_t *mat_probas) {
+void lr_dtw_backtrace(const mat3d_t probas, mat_t *mat_probas) {
     (*mat_probas).resize(probas.size());
     for(size_t i=0; i<(*mat_probas).size(); ++i)
         (*mat_probas)[i].resize(probas[i].size());

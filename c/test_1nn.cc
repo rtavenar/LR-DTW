@@ -35,8 +35,8 @@ int main(int argc, char **argv) {
     for(size_t i=0; i<predicted_labels.size(); ++i)
         if(predicted_labels[i] == labels_test[i])
             n_cc += 1.;
-    std::cout << get_fname(argv[2]) << ";" << gamma << ";" << entropy_regularized << ";" << n_cc / predicted_labels.size()
-              << std::endl;
+    std::cout << get_fname(argv[2]) << ";" << gamma << ";" << entropy_regularized << ";" <<
+              n_cc / predicted_labels.size() << std::endl;
 
     return 0;
 }

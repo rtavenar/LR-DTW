@@ -91,7 +91,7 @@ def get_probas_formula(cost_up, cost_right, cost_diagonal, gamma, entropy_penali
     return probas
 
 
-def p_dtw(s_x=None, s_y=None, mat_dist=None, gamma=0., entropy_penalized=False):
+def lr_dtw(s_x=None, s_y=None, mat_dist=None, gamma=0., entropy_penalized=False):
     if mat_dist is None:
         assert s_x is not None and s_y is not None, "If mat_dist is not given, both time series should be provided"
         mat_dist = cdist(s_x, s_y)
@@ -114,7 +114,7 @@ def p_dtw(s_x=None, s_y=None, mat_dist=None, gamma=0., entropy_penalized=False):
     return mat_cost[-1, -1], probas
 
 
-def p_dtw_backtrace(probas):
+def lr_dtw_backtrace(probas):
     n, m = probas.shape[:2]
     mat_probas = numpy.zeros((n, m))
     mat_probas[-1, -1] = 1.
