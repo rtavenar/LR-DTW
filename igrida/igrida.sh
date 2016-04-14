@@ -6,7 +6,7 @@
 #OAR -E /temp_dd/igrida-fs1/rtavenar/LR-DTW/output/%jobid%.error
 # set -xv
 
-SOURCEDIR=/udd/rtavenar/src/LR-DTW && WORKINGDIR=${SOURCEDIR}/ && EXECUTABLE=${SOURCEDIR}/c/test_1nn
+SOURCEDIR=/udd/rtavenar/src/LR-DTW && WORKINGDIR=${SOURCEDIR}/c/ && EXECUTABLE=${SOURCEDIR}/test_1nn
 cd ${WORKINGDIR} && ${EXECUTABLE} $*
 
 
