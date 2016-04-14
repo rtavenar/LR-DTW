@@ -3,7 +3,7 @@
 notebooks/.ipynb_checkpoints
 py/test_lr_dtw.py
 **/.DS_Store
-c/test_p_dtw*
+c/test_lr_dtw*
 xp/*
 c/*.o
 c/test_optima*
