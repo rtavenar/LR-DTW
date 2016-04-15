@@ -22,11 +22,18 @@ void cdist(const mat_t s_x, const mat_t s_y, mat_t *distances) {
     }
 }
 
-vec_t get_probas_formula(const float cost_up, const float cost_right, const float cost_diagonal, const float gamma,
-                         const bool entropy_regularized) {
+vec_t get_probas_formula(float cost_up, float cost_right, float cost_diagonal, const float gamma,
+                         const bool entropy_regularized, const bool normalized_costs) {
     vec_t probas;
     probas.resize(3);
     std::fill(probas.begin(), probas.end(), 0.);
+
+    if(normalized_costs) {
+        float s = cost_up + cost_diagonal + cost_right;
+        cost_up /= s;
+        cost_diagonal /= s;
+        cost_right /= s;
+    }
 
     if(gamma < 1e-12) {
         float min_val = std::min(std::min(cost_up, cost_right), cost_diagonal);
@@ -44,18 +51,22 @@ vec_t get_probas_formula(const float cost_up, const float cost_right, const floa
     } else {
         float p_up, p_right;
         if(entropy_regularized) {
+            // TODO
             p_up = 1. / (1. + pow(2., (cost_up - cost_right) / gamma) + pow(2., (cost_up - cost_diagonal) / gamma));
             p_right = 1. / (1. + pow(2., (cost_right - cost_up) / gamma) +
                       pow(2., (cost_right - cost_diagonal) / gamma));
         } else {
+            // TODO
             p_up = 1. / 3. * (1. + (cost_right + cost_diagonal - 2. * cost_up) / (2. * gamma));
             p_right = 1. / 3. * (1. + (cost_up + cost_diagonal - 2. * cost_right) / (2. * gamma));
         }
         if(p_up >= 0. && p_right >= 0. && p_up + p_right <= 1.) {
+            // TODO
             probas[UP] = p_up;
             probas[RIGHT] = p_right;
             probas[DIAGONAL] = 1. - p_up - p_right;
         } else if(p_up < 0.) {
+            // TODO
             if(entropy_regularized) {
                 p_right = 1. / (1. + pow(2., (cost_right - cost_diagonal) / gamma));
             } else {
@@ -75,6 +86,7 @@ vec_t get_probas_formula(const float cost_up, const float cost_right, const floa
                 probas[DIAGONAL] = 0.;
             }
         } else if(p_right < 0.) {
+            // TODO
             if(entropy_regularized) {
                 p_up = 1. / (1. + pow(2., (cost_up - cost_diagonal) / gamma));
             } else {
@@ -94,6 +106,7 @@ vec_t get_probas_formula(const float cost_up, const float cost_right, const floa
                 probas[DIAGONAL] = 0.;
             }
         } else {
+            // TODO
             if(entropy_regularized) {
                 p_up = 1. / (1. + pow(2., (cost_up - cost_right) / gamma));
             } else {
@@ -117,7 +130,8 @@ vec_t get_probas_formula(const float cost_up, const float cost_right, const floa
     return probas;
 }
 
-float lr_dtw(const mat_t s_x, const mat_t s_y, const float gamma, mat3d_t *probas, const bool entropy_regularized) {
+float lr_dtw(const mat_t s_x, const mat_t s_y, const float gamma, mat3d_t *probas, const bool entropy_regularized,
+             const bool normalized_costs) {
     mat_t distances, mat_cost;
 
     cdist(s_x, s_y, &distances);
@@ -145,7 +159,7 @@ float lr_dtw(const mat_t s_x, const mat_t s_y, const float gamma, mat3d_t *proba
     for(size_t i=1; i<s_x.size(); ++i) {
         for(size_t j=1; j<s_y.size(); ++j) {
             (*probas)[i][j] = get_probas_formula(mat_cost[i - 1][j], mat_cost[i][j - 1], mat_cost[i - 1][j - 1], gamma,
-                                                 entropy_regularized);
+                                                 entropy_regularized, normalized_costs);
             mat_cost[i][j] = (*probas)[i][j][UP] * mat_cost[i - 1][j] + (*probas)[i][j][RIGHT] * mat_cost[i][j - 1] +
                 (*probas)[i][j][DIAGONAL] * mat_cost[i - 1][j - 1] + distances[i][j];
         }
