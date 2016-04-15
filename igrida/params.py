@@ -11,7 +11,7 @@ for ds_name in os.listdir(path):
         fname_test = os.path.join(path, ds_name, "%s_TEST" % ds_name)
         if os.path.exists(fname_train) and os.path.exists(fname_test):
             for gamma in [0., .005, .01, .05, .1, .5, 1., 5.]:
-                if gamma > 0:
+                if gamma > 0.:
                     for entropy_reg in [0, 1]:
                         fp_out.write("%s %s %f %d\n" % (fname_train, fname_test, gamma, entropy_reg))
                 else:

@@ -7,6 +7,6 @@
 # set -xv
 
 SOURCEDIR=/udd/rtavenar/src/LR-DTW/c/ && WORKINGDIR=${SOURCEDIR} && EXECUTABLE=${SOURCEDIR}/test_1nn
-cd ${WORKINGDIR} && ${EXECUTABLE} $*
+cd ${WORKINGDIR} && echo -n "norm." && ${EXECUTABLE} $*
 
 
